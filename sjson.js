@@ -1,6 +1,6 @@
 var _ = require("lodash");
 var jp = require('jsonpath-plus');
-var fs=require("fs");
+var fs = require("fs");
 
 // in: o  option
 // in: o: [recursion] default to 1
@@ -34,11 +34,11 @@ var sjson = (function() {
 
             _.each(o.sjson, function(value, index) {
                 try {
-                  if (_.isString(value) && value.indexOf("#!file") !== -1) {
-                      value = value.replace("#!file", "").trim();
-                      var file=fs.readFileSync(value).toString().trim();
-                      value="#!function  "+file;
-                  }
+                    if (_.isString(value) && value.indexOf("#!file") !== -1) {
+                        value = value.replace("#!file", "").trim();
+                        var file = fs.readFileSync(value).toString().trim();
+                        value = "#!function  " + file;
+                    }
 
                     // if value contains #!function
                     if (_.isString(value) && value.indexOf("#!function") !== -1) {
@@ -46,14 +46,14 @@ var sjson = (function() {
                         value = value.replace("#!function", "").trim();
                         // this line converts function from text to actual function.
                         // function have o,cb where o is option and cb is callback
-                        value=o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
+                        value = o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
                     }
 
                     // if value contains #!reference
                     if (_.isString(value) && value.indexOf("#!reference") !== -1 && o.recursion <= o.depth) { // this is limit for cyclic redundancy depth
                         value = value.replace("#!reference", "").trim();
                         // this following script is subject to change. It allows cyclic reference being realized using jsonpath pathing algorithm
-                        o.sjson[index] = sjson.parseJSON({
+                        value = o.sjson[index] = sjson.parseJSON({
                             sjson: jp({
                                 json: o.sjson,
                                 path: value
@@ -64,7 +64,7 @@ var sjson = (function() {
 
                     // if recursion is bigger than 4, skip further recursion
                     if (_.isObject(value) && o.recursion <= o.depth) { // this is limit for json depth
-                        o.sjson[index] = sjson.parseJSON({
+                        value = o.sjson[index] = sjson.parseJSON({
                             sjson: value,
                             recurson: o.recurson + 1
                         }).sjson;
