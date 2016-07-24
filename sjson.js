@@ -1,5 +1,5 @@
 var _=require("lodash");
-var jp = require('jsonpath');
+var jp = require('jsonpath-plus');
 
 // in: o  option
 // in: o: [recursion] default to 1
@@ -46,7 +46,7 @@ sjson.parseJSON = function(o) {
           value = value.replace("#!reference", "").trim();
           // this following script is subject to change. It allows cyclic reference being realized using jsonpath pathing algorithm
           o.sjson[index] = sjson.parseJSON({
-              sjson: jp.query(o.sjson, value),  // see jsonpath module for clues
+              sjson: jp({json:o.sjson, path:value}),  // see jsonpath module for clues
               recurson: o.recurson + 1
           }).sjson;
         }

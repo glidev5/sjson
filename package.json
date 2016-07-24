@@ -1,6 +1,6 @@
 {
   "name": "sjson",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "main":"sjson.js",
   "scripts": {
@@ -8,6 +8,6 @@
   },
   "dependencies": {
     "lodash":"4.11.2",
-    "jsonpath":""
+    "jsonpath-plus":""
   }
 }
