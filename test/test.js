@@ -31,7 +31,22 @@ it("should be able to parse function",function(done){
   }
   var result1=sjson.parseJSON({sjson:target}).sjson;
   console.log(result1)
-  var result2=result1.theplusfunction(target); 
+  var result2=result1.theplusfunction(target);
+  console.log(result2)
+  assert.equal(result2,3);
+  done();
+})
+
+it("should be able to parse nested function",function(done){
+  var target={
+    a:1,
+    b:2,
+    theplusfunction:"#!function return o.a+o.b",
+    c:"#!reference theplusfunction"   // c reference target.a
+  }
+  var result1=sjson.parseJSON({sjson:target}).sjson;
+  console.log(result1)
+  var result2=result1.c(target);
   console.log(result2)
   assert.equal(result2,3);
   done();

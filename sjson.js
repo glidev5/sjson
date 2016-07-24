@@ -27,15 +27,25 @@ sjson.parseJSON = function(o) {
     _.each(o.sjson, function(value, index) {
         // if value contains #!function
         if (_.isString(value) && value.indexOf("#!function") !== -1) {
-            value = value.replace("#!function", "");
-            // this line converts function from text to actual function.
-            // function have o,cb where o is option and cb is callback
-            o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
-            o.sjson[index+"_bak"]=value;
+          o.sjson[index+"_bak"]=value;
+          value = value.replace("#!function", "");
+          // this line converts function from text to actual function.
+          // function have o,cb where o is option and cb is callback
+          o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
+        }
+
+        // if value contains #!reference
+        if (_.isString(value) && value.indexOf("#!reference") !== -1&&o.recursion<8) {  // this is limit for cyclic redundancy depth
+          value = value.replace("#!reference", "").trim();
+          //o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
+          o.sjson[index] = sjson.parseJSON({
+              sjson: o.sjson[value],
+              recurson: o.recurson + 1
+          }).sjson;
         }
 
         // if recursion is bigger than 4, skip further recursion
-        if (_.isObject(value) && o.recursion <= 4) {
+        if (_.isObject(value) && o.recursion <= 8) {  // this is limit for json depth
             o.sjson[index] = sjson.parseJSON({
                 sjson: value,
                 recurson: o.recurson + 1
