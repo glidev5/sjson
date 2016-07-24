@@ -38,6 +38,8 @@ assert.equal(result2,3);
 
 ## versions
 
+### 0.0.6 allow #!file reference
+
 ### 0.0.5 sjson is now in private space
 
 ### 0.0.4 #!reference now use jsonpath-plus module, more awesome!
