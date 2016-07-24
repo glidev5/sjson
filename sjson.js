@@ -46,7 +46,7 @@ var sjson = (function() {
                         value = value.replace("#!function", "").trim();
                         // this line converts function from text to actual function.
                         // function have o,cb where o is option and cb is callback
-                        o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
+                        value=o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
                     }
 
                     // if value contains #!reference
