@@ -1,4 +1,5 @@
 var _=require("lodash");
+var jp = require('jsonpath');
 
 // in: o  option
 // in: o: [recursion] default to 1
@@ -12,9 +13,14 @@ var _=require("lodash");
 var sjson = {};
 var that=this;
 sjson.parseJSON = function(o) {
+  try{
     // recursion is default to 1. It tracks how many recursion is nested
     if (!o.recursion) {
         o.recursion = 1;
+    }
+
+    if(!o.depth){
+      o.depth=32;
     }
 
     // attach global space to o, remove if not needed
@@ -25,6 +31,7 @@ sjson.parseJSON = function(o) {
     }
 
     _.each(o.sjson, function(value, index) {
+      try{
         // if value contains #!function
         if (_.isString(value) && value.indexOf("#!function") !== -1) {
           o.sjson[index+"_bak"]=value;
@@ -35,24 +42,31 @@ sjson.parseJSON = function(o) {
         }
 
         // if value contains #!reference
-        if (_.isString(value) && value.indexOf("#!reference") !== -1&&o.recursion<8) {  // this is limit for cyclic redundancy depth
+        if (_.isString(value) && value.indexOf("#!reference") !== -1&&o.recursion<=o.depth) {  // this is limit for cyclic redundancy depth
           value = value.replace("#!reference", "").trim();
-          //o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
+          // this following script is subject to change. It allows cyclic reference being realized using jsonpath pathing algorithm
           o.sjson[index] = sjson.parseJSON({
-              sjson: o.sjson[value],
+              sjson: jp.query(o.sjson, value),  // see jsonpath module for clues
               recurson: o.recurson + 1
           }).sjson;
         }
 
         // if recursion is bigger than 4, skip further recursion
-        if (_.isObject(value) && o.recursion <= 8) {  // this is limit for json depth
+        if (_.isObject(value) && o.recursion <= o.depth) {  // this is limit for json depth
             o.sjson[index] = sjson.parseJSON({
                 sjson: value,
                 recurson: o.recurson + 1
             }).sjson;
         }
+      }catch(e){
+        console.log(e);
+      }
     })
     return o;
+  }
+  catch(e){
+    console.log(e);
+  }
 }
 
 sjson.cleanJSON=function(o){

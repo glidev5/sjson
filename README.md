@@ -31,5 +31,6 @@ assert.equal(result2,3);
 */
 
 ## versions
+### 0.0.3 #!reference now use jsonpath module, awesome!
 ### 0.0.2 #!reference working
 ### 0.0.1 init  #!function working
