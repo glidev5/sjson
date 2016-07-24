@@ -60,3 +60,19 @@ it("should be able to parse nested function", function(done) {
     assert.equal(result1.d[0].f.g, 123);
     done();
 })
+
+it("should be able to reference sjson file", function(done) {
+    var target = {
+        a: 1,
+        b: 2,
+        c: "#!file test/data.sjson"
+    };
+    var result = sjson.parseJSON({
+        sjson: target
+    }).sjson;
+    var result2=result.c(target)
+    console.log(result)
+    console.log(result2)
+    assert.equal(result2, 5)
+    done();
+})

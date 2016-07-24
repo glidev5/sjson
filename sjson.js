@@ -1,5 +1,6 @@
 var _ = require("lodash");
 var jp = require('jsonpath-plus');
+var fs=require("fs");
 
 // in: o  option
 // in: o: [recursion] default to 1
@@ -9,6 +10,7 @@ var jp = require('jsonpath-plus');
 // out: o: o.sjson[index]  function
 // out: o: o.sjson[index_bak] backup of function in text format
 // out: o: o.recrusion  recursion level
+
 
 var that = this;
 var sjson = (function() {
@@ -32,10 +34,16 @@ var sjson = (function() {
 
             _.each(o.sjson, function(value, index) {
                 try {
+                  if (_.isString(value) && value.indexOf("#!file") !== -1) {
+                      value = value.replace("#!file", "").trim();
+                      var file=fs.readFileSync(value).toString().trim();
+                      value="#!function  "+file;
+                  }
+
                     // if value contains #!function
                     if (_.isString(value) && value.indexOf("#!function") !== -1) {
                         o.sjson[index + "_bak"] = value;
-                        value = value.replace("#!function", "");
+                        value = value.replace("#!function", "").trim();
                         // this line converts function from text to actual function.
                         // function have o,cb where o is option and cb is callback
                         o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
