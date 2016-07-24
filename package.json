@@ -1,13 +1,13 @@
 {
-  "name": "sjson",
-  "version": "0.0.4",
-  "private": true,
-  "main":"sjson.js",
-  "scripts": {
-    "test":"mocha test/test.js"
-  },
-  "dependencies": {
-    "lodash":"4.11.2",
-    "jsonpath-plus":""
-  }
+    "name": "sjson",
+    "version": "0.0.5",
+    "private": true,
+    "main": "sjson.js",
+    "scripts": {
+        "test": "mocha test/test.js"
+    },
+    "dependencies": {
+        "lodash": "4.11.2",
+        "jsonpath-plus": ""
+    }
 }
