@@ -38,6 +38,11 @@ assert.equal(result2,3);
 
 ## versions
 
+### 0.0.7 allow deep nested reference with #!file
+###         sjson.remake
+###         sjson.parser
+###         switching to GNU License
+
 ### 0.0.6 allow #!file reference
 
 ### 0.0.5 sjson is now in private space

@@ -1,1 +1,2 @@
+#!function
 return o.a+2*o.b

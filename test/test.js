@@ -76,3 +76,56 @@ it("should be able to reference sjson file", function(done) {
     assert.equal(result2, 5)
     done();
 })
+
+
+it("should be able to reference sjson file", function(done) {
+    var target = {
+        a: 1,
+        b: 2,
+        c: "#!function return o.a*o.b"
+    };
+    var result = sjson.remake({
+        index:"c",
+        sjson: target
+    }).sjson;
+    var result2=result.c(target)
+    console.log(result)
+    console.log(result2)
+    assert.equal(result2, 2)
+    done();
+})
+
+
+it("should be able to reference sjson file", function(done) {
+    var target = {
+        a: 1,
+        b: 2,
+        c: "#!function return o.a*o.b"
+    };
+    var result = sjson.parse({
+        value:target.c
+    }).function;
+    console.log(result)
+    assert.equal(result, '(function(o,cb){return o.a*o.b})')
+    done();
+})
+
+
+it("should be able to reference sjson file", function(done) {
+    var target = {
+        a: 1,
+        b: 2,
+        c: "#!file test/data2.sjson"
+    };
+    var result = sjson.parseJSON({
+        sjson: target
+    }).sjson;
+    console.log(result)
+    var result2=result.c.j
+    console.log(result2)
+    assert.equal(result2, 12)
+    var result3=result.c.l(result.c)
+    console.log(result3)
+    assert.equal(result3, 46)
+    done();
+})

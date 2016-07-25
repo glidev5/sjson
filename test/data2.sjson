@@ -1,0 +1,6 @@
+#!function
+return {
+  j:12,
+  k:34,
+  l:"#!function return o.j+o.k"
+}

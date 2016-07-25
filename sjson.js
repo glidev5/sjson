@@ -2,6 +2,7 @@ var _ = require("lodash");
 var jp = require('jsonpath-plus');
 var fs = require("fs");
 
+
 // in: o  option
 // in: o: [recursion] default to 1
 // in: o: sjson object containing sjson function in text format
@@ -14,6 +15,7 @@ var fs = require("fs");
 
 var that = this;
 var sjson = (function() {
+  // convert string sjson to object sjson
     function parseJSON(o) {
         try {
             // recursion is default to 1. It tracks how many recursion is nested
@@ -22,7 +24,7 @@ var sjson = (function() {
             }
 
             if (!o.depth) {
-                o.depth = 32;
+                o.depth = 512;
             }
 
             // attach global space to o, remove if not needed
@@ -34,9 +36,10 @@ var sjson = (function() {
 
             _.each(o.sjson, function(value, index) {
                 try {
+                  // handles #!file   see test/data.sjson for example
                     if (_.isString(value) && value.indexOf("#!file") !== -1) {
                         value = value.replace("#!file", "").trim();
-                        var file = fs.readFileSync(value).toString().trim();
+                        var file = fs.readFileSync(value).toString().replace("#!function","").trim();
                         value = "#!function  " + file;
                     }
 
@@ -47,6 +50,16 @@ var sjson = (function() {
                         // this line converts function from text to actual function.
                         // function have o,cb where o is option and cb is callback
                         value = o.sjson[index] = eval("(function(o,cb){" + value + "})", o.globalSpace);
+                        try{
+                          value = o.sjson[index]=value();
+                        }catch(e){
+                          //console.log(e)
+                        }
+                        try{
+                          value = o.sjson[index]=JSON.parse(value);
+                        }catch(e){
+                          //console.log(e)
+                        }
                     }
 
                     // if value contains #!reference
@@ -62,6 +75,7 @@ var sjson = (function() {
                         }).sjson;
                     }
 
+                    // iterate through sub properties
                     // if recursion is bigger than 4, skip further recursion
                     if (_.isObject(value) && o.recursion <= o.depth) { // this is limit for json depth
                         value = o.sjson[index] = sjson.parseJSON({
@@ -78,8 +92,44 @@ var sjson = (function() {
             console.log(e);
         }
     }
+
+    function remake(o){
+      // remake function using function_bak
+      // in: [globalSpace]
+      // in: o.value    content of the function in string
+      // in: o.index    name of the output function
+      // in: o.sjson    object to attach the o.index o.value pair
+      // output: o.sjson[index]  actual function in function format
+      // output: o.sjson[index_bak]  bak function in string
+      // output: o.sjson
+      // output: o
+      try{
+        o.sjson=o.sjson||{};
+        o.globalSpace=o.globalSpace||that;
+        o.index=o.index||"function";
+        o.value=o.sjson[o.index].replace("#!function","").trim()||"return null";
+        o.sjson[o.index] = eval("(function(o,cb){" + o.value + "})", o.globalSpace);
+        o.sjson[o.index+"_bak"]="#!function "+o.value;
+      }catch(e){
+        console.log(e);
+      }
+      return o;
+    }
+
+    function parse(o){
+      // cleans up the #!function into clean normal source code
+      // in: o.value    #!function
+      // out: o.function   normal function in string
+      o.value=o.value||"return null";
+      o.function=o.value.replace("#!function","").trim();
+      o.function="(function(o,cb){" + o.function + "})";
+      return o;
+    }
+
     return {
-        parseJSON: parseJSON
+        parseJSON: parseJSON,
+        remake:remake,
+        parse:parse
     };
 }())
 
