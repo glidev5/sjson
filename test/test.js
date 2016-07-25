@@ -78,7 +78,7 @@ it("should be able to reference sjson file", function(done) {
 })
 
 
-it("should be able to reference sjson file", function(done) {
+it("should be able to remake sjson file", function(done) {
     var target = {
         a: 1,
         b: 2,
@@ -96,7 +96,7 @@ it("should be able to reference sjson file", function(done) {
 })
 
 
-it("should be able to reference sjson file", function(done) {
+it("should be able to parse sjson function to normal function", function(done) {
     var target = {
         a: 1,
         b: 2,
