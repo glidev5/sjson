@@ -1,10 +1,10 @@
 {
-    "name": "sjson",
+    "name": "sjson5",
     "version": "0.0.7",
-    "private": true,
+    "private": false,
     "main": "sjson.js",
     "scripts": {
-        "test": "mocha test/test.js"
+        "test": "mocha"
     },
     "dependencies": {
         "lodash": "4.11.2",

@@ -2,6 +2,12 @@
 
 ## Description:
 
+### sjson means serializable json. It is a rudimentry module for serializable json initiatives.
+
+```javascript
+sjson means serializable json. It is a rudimentry module for serializable json initiatives.
+```
+
 ### sjson is built on top of json resolving 2 dead lock features: function in objects and cyclic redundancy.
 
 ### sjson allows you to put function source code in the object and parseJSON will convert string function to function in runtime.
